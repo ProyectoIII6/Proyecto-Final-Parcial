@@ -38,6 +38,52 @@ void insertarCola(cola *&, cola *&, int);
 bool colaVacia(cola *);
 void suprimirCola(cola *&, cola *&, int &);
 
+//OPCION 3
+struct Nodo {
+	char curso[50];
+	Nodo *sig;
+};
+
+struct Clave {
+	char nombre[50];
+	Clave *sig;
+	Nodo *cab;
+	Nodo *pie;
+}*cabeza, *fin;
+void Tabla_hash();
+void CrearClave(char clave[]);
+void BuscarClave(Clave *&encabezado, char clave[], char curso[]);
+void MostrarTabla();
+void MostrarDatos(Nodo *&encabezado);
+void RegistrarDatos(Nodo *&encabezado, Nodo *&pie, char curso[]);
+
+
+//OPCION 4
+typedef struct nodo {
+	int dato;
+	struct nodo *siguiente;
+	struct nodo *atras;
+}nodo;
+
+nodo *primero = NULL;
+nodo *ultimo = NULL;
+
+void lista_doble();
+void insertarNodo();
+void mostrarListaPU();
+void mostrarListaUP();
+
+//OPCION 5
+typedef struct nodoCircular {
+	int dato;
+	struct nodoCircular *siguiente;
+}nodoCircular;
+nodoCircular *principio = NULL;
+nodoCircular *final = NULL;
+void lista_circular();
+void insertarNodoCircular();
+void mostrarLista();
+
 int y;
 
 
@@ -73,15 +119,15 @@ void gotoxy(int x, int y) {
 
 void opcionesPrincipal() {
 	SetColor(15);
-	gotoxy(50, 4);  cout << "LAB 1 (LISTA SIMPLE)";
+	gotoxy(50, 4);  cout << "LISTA SIMPLE";
 	gotoxy(30, 5);  cout << "_____________________________________________________________";
-	gotoxy(50, 6);  cout << "LAB 4 (COLA DINAMICA)";
+	gotoxy(50, 6);  cout << "COLA DINAMICA";
 	gotoxy(30, 7);  cout << "_____________________________________________________________";
-	gotoxy(55, 8);  cout << "OPCION 3";
+	gotoxy(55, 8);  cout << "TABLA DE HASH";
 	gotoxy(30, 9);  cout << "_____________________________________________________________";
-	gotoxy(55, 10); cout << "OPCION 4";
+	gotoxy(55, 10); cout << "LISTA DOBLE";
 	gotoxy(30, 11); cout << "_____________________________________________________________";
-	gotoxy(55, 12); cout << "OPCION 5";
+	gotoxy(55, 12); cout << "LISTA CIRCULAR";
 	gotoxy(30, 13); cout << "_____________________________________________________________";
 	gotoxy(55, 14); cout << "OPCION 6";
 	gotoxy(30, 15); cout << "_____________________________________________________________";
@@ -98,31 +144,31 @@ void opcionesPrincipal() {
 
 	if (y == 4) {
 		SetColor(11);
-		gotoxy(50, 4);  cout << "LAB 1 (LISTA SIMPLE)";
+		gotoxy(50, 4);  cout << "LISTA SIMPLE";
 		SetColor(13);
 		gotoxy(30, 5);  cout << "_____________________________________________________________";
 	}
 	else if (y == 6) {
 		SetColor(11);
-		gotoxy(50, 6);  cout << "LAB 4 (COLA DINAMICA)";
+		gotoxy(50, 6);  cout << "COLA DINAMICA";
 		SetColor(13);
 		gotoxy(30, 7);  cout << "_____________________________________________________________";
 	}
 	else if (y == 8) {
 		SetColor(11);
-		gotoxy(55, 8);  cout << "OPCION 3";
+		gotoxy(55, 8);  cout << "TABLA DE HASH";
 		SetColor(13);
 		gotoxy(30, 9);  cout << "_____________________________________________________________";
 	}
 	else if (y == 10) {
 		SetColor(11);
-		gotoxy(55, 10);  cout << "OPCION 4";
+		gotoxy(55, 10);  cout << "LISTA DOBLE";
 		SetColor(13);
 		gotoxy(30, 11);  cout << "_____________________________________________________________";
 	}
 	else if (y == 12) {
 		SetColor(11);
-		gotoxy(55, 12);  cout << "OPCION 5";
+		gotoxy(55, 12);  cout << "LISTA CIRCULAR";
 		SetColor(13);
 		gotoxy(30, 13);  cout << "_____________________________________________________________";
 	}
@@ -201,13 +247,21 @@ void menuPrincipal() {
 				system("cls");
 			}
 			else if (y == 8) {
+				system("cls");
+				Tabla_hash();
+				system("cls");
 
 			}
 			else if (y == 10) {
+				system("cls");
+				lista_doble();
+				system("cls");
 
 			}
 			else if (y == 12) {
-
+				system("cls");
+				lista_circular();
+				system("cls");
 			}
 			else if (y == 14) {
 
@@ -452,4 +506,304 @@ void suprimirCola(cola *&frente, cola *&fin, int &n) {
 		frente = frente->siguiente;
 
 	delete aux;
+}
+
+//OPCION 3
+void CrearClave(char clave[]) {
+	Clave *nueva_clave = new Clave();
+	strcpy_s(nueva_clave->nombre, clave);
+	Clave *actual = new Clave();
+	actual = cabeza;
+	Clave *anterior = new Clave();
+
+	if (cabeza == NULL) {
+		//Si la tabla esta vacia
+		cabeza = nueva_clave;
+		nueva_clave->sig = NULL;
+		fin = cabeza;
+	}
+	else {
+		while (actual != NULL) {
+			if (strcmp(clave, actual->nombre) < 0) {
+				if (actual == cabeza) {
+					//Si la clave es menor que el actual y es la cabeza
+					nueva_clave->sig = cabeza;
+					cabeza = nueva_clave;
+					break;
+				}
+				else {
+					//Si la clave es menor que el actual y no es la cabeza
+					anterior->sig = nueva_clave;
+					nueva_clave->sig = actual;
+					break;
+				}
+			}
+			else if (strcmp(clave, actual->nombre) > 0) {
+				if (actual == fin) {
+					//Si la clave es mayor que toda la lista, se inserta al final
+					fin->sig = nueva_clave;
+					nueva_clave->sig = NULL;
+					fin = nueva_clave;
+					break;
+				}
+				else {
+					//Si la clave es menor al que se analizo, que siga recorriendo la lista
+					anterior = actual;
+					actual = actual->sig;
+				}
+			}
+			else {
+				cout << "No se puede ingresar nuevos" << endl;
+				break;
+			}
+		}
+	}
+}
+
+void BuscarClave(Clave *&encabezado, char clave[], char curso[]) {
+	Clave *buscador = new Clave();
+	buscador = encabezado;
+
+	if (buscador != NULL) {
+		while (buscador != NULL) {
+			if (strcmp(clave, buscador->nombre) == 0) {
+				RegistrarDatos(buscador->cab, buscador->pie, curso);
+				break;
+			}
+			buscador = buscador->sig;
+		}
+	}
+}
+
+void RegistrarDatos(Nodo *&encabezado, Nodo *&pie, char curso[]) {
+	Nodo *nuevo_nodo = new Nodo();
+	strcpy_s(nuevo_nodo->curso, curso);
+
+	if (encabezado == NULL) {
+		encabezado = nuevo_nodo;
+		nuevo_nodo->sig = NULL;
+		pie = encabezado;
+	}
+	else {
+		pie->sig = nuevo_nodo;
+		nuevo_nodo->sig = NULL;
+		pie = nuevo_nodo;
+	}
+}
+
+void MostrarTabla() {
+	Clave *actual = new Clave();
+	actual = cabeza;
+
+	if (actual != NULL) {
+		while (actual != NULL) {
+			cout << actual->nombre << endl;
+			cout << endl;
+			MostrarDatos(actual->cab);
+			actual = actual->sig;
+		}
+	}
+}
+
+void MostrarDatos(Nodo *&encabezado) {
+	Nodo *actual = new Nodo();
+	actual = encabezado;
+	if (actual != NULL) {
+		while (actual != NULL) {
+			cout << " -> " << actual->curso << endl;
+			actual = actual->sig;
+		}
+	}
+	cout << endl;
+}
+
+void Tabla_hash() {
+	int opc = 0;
+	int salida = 0;
+	char curso[50];
+	char unidades[50];
+
+	while (opc != 4) {
+		system("cls");
+		cout << "Tabla de Hash" << endl;
+		cout << "[1] Crear Curso" << endl;
+		cout << "[2] Agregar Unidades" << endl;
+		cout << "[3] Consultar Curso" << endl;
+		cout << "[4] Salir" << endl;
+		cin >> opc; cin.ignore();
+
+		switch (opc) {
+		case 1:
+			system("cls");
+			cout << "-> Creacion de Cursos <- " << endl;
+			cout << endl;
+			cout << "Ingrese el nombre del curso " << endl;
+			gets_s(curso);
+			CrearClave(curso);
+			strcpy_s(curso, "");
+			system("pause>null");
+			break;
+		case 2:
+
+			system("cls");
+			cout << "-> Unidades <-" << endl;
+			cout << endl;
+			cout << "Ingrese el nombre del curso" << endl;
+			gets_s(curso);
+
+			while (salida != 1) {
+				cout << "Ingrese la unidad" << endl;
+				gets_s(unidades);
+
+				BuscarClave(cabeza, curso, unidades);
+				strcpy_s(unidades, "");
+
+				cout << "Desea Ingresar otra Unidad? [SI = 0 | NO = 1]" << endl;
+				cin >> salida; cin.ignore();
+				cout << endl;
+			}
+			strcpy_s(curso, "");
+			salida = 0;
+			system("pause>null");
+			break;
+		case 3:
+			system("cls");
+			cout << "-> Lista de Cursos <-" << endl;
+			cout << endl;
+			MostrarTabla();
+			system("pause>null");
+			break;
+		}
+	}
+}
+
+//OPCION 4
+void insertarNodo() {
+	system("cls");
+	char op;
+	nodo *nuevo = new nodo();
+	cout << "..:INGRESO DE DATOS:..\n";
+	cout << "Ingrese un valor entero ";
+	cin >> nuevo->dato;
+	if (primero == NULL)
+	{
+		primero = nuevo;
+		primero->siguiente = NULL;
+		primero->atras = NULL;
+		ultimo = primero;
+	}
+	else
+	{
+		ultimo->siguiente = nuevo;
+		nuevo->siguiente = NULL;
+		nuevo->atras = ultimo;
+		ultimo = nuevo;
+
+	}
+	cout << "Dato ingresado con exito\n ";
+	system("pause");
+}
+
+void mostrarListaPU() {
+	system("cls");
+	cout << "\n...:LISTA DEL PRIMERO AL ULTIMO:...\n";
+	nodo *actual = new nodo();
+	actual = primero;
+	if (primero != NULL)
+	{
+		while (actual != NULL)
+		{
+			cout << "\n" << actual->dato;
+			actual = actual->siguiente;
+		}
+	}
+	else
+	{
+		cout << "La lista se encuentra vacia\n";
+	}
+
+}
+
+void mostrarListaUP() {
+
+	cout << "\n...:LISTA DEL ULTIMO AL PRIMERO:...\n";
+	nodo *actual = (nodo*)malloc(sizeof(nodo));
+	actual = ultimo;
+	if (primero != NULL)
+	{
+		while (actual != NULL)
+		{
+			cout << "\n" << actual->dato;
+			actual = actual->atras;
+		}
+	}
+	else
+	{
+		cout << "La lista se encuentra vacia\n";
+	}
+
+}
+
+void lista_doble() {
+	insertarNodo();
+	insertarNodo();
+	insertarNodo();
+	insertarNodo();
+	insertarNodo();
+	insertarNodo();
+	mostrarListaPU();
+	mostrarListaUP();
+	cout << endl;
+	system("pause");
+}
+
+//OPCION 5
+void insertarNodoCircular() {
+	nodoCircular *nuevo = new nodoCircular();
+	cout << "\nIngrese un dato entero ";
+	cin >> nuevo->dato;
+
+	if (principio == NULL)
+	{
+		principio = nuevo;
+		principio->siguiente = principio;
+		final = principio;
+	}
+	else
+	{
+		final->siguiente = nuevo;
+		nuevo->siguiente = principio;
+		final = nuevo;
+	}
+	cout << "\nNodo ingresado con exito\n";
+
+}
+
+void mostrarLista() {
+	nodoCircular *actual = new nodoCircular();
+	actual = principio;
+	cout << "\n..:LA LISTA INGRESADA ES:.\n";
+	if (primero != NULL)
+	{
+		do
+		{
+			cout << "\n" << actual->dato;
+			actual = actual->siguiente;
+		} while (actual != principio);
+	}
+	else
+	{
+		"\nLa lista se encuentra vacia\n";
+	}
+}
+
+void lista_circular() {
+	insertarNodoCircular();
+	insertarNodoCircular();
+	insertarNodoCircular();
+	insertarNodoCircular();
+	insertarNodoCircular();
+	mostrarLista();
+	cout << endl;
+	system("pause");
 }
